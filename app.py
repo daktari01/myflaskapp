@@ -56,11 +56,21 @@ def register():
         # Create cursor
         cur = mysql.connection.cursor()
 
+        # Execute query
         cur.execute("INSERT INTO users (name, email, username, password) VALUES(%s, %s, %s, %s)",(name, email, username, password))
 
-    elif request.method == 'GET' and form.validate():
-        pass 
+        # Commit to DB
+        mysql.connection.commit()
+
+        # Close the connection
+        cur.close()
+
+        flash('You are now registered and can log in', 'success')
+
+        return redirect(url_for('login'))
+
     return render_template('register.html', form=form)
 
 if __name__ == '__main__':
+    app.secret_key = 'SecRet_kEY!2$&'
     app.run(debug=True)
