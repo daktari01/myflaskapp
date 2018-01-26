@@ -1,5 +1,5 @@
 from flask import Flask, render_template, flash, request, redirect, url_for, session, logging
-from data import Articles 
+# from data import Articles 
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
@@ -46,9 +46,18 @@ def articles():
     # Close connection
     cur.close()
 
+# Single article
 @app.route('/article/<int:id>/')
 def article(id):
-    return render_template('article.html', id=id)
+    # Create cursor
+    cur = mysql.connection.cursor()
+
+    # Get article
+    result = cur.execute("SELECT * FROM articles WHERE id=%s", [id])
+
+    article = cur.fetchone()
+    
+    return render_template('article.html', article=article)
 
 class RegistrationForm(Form):
     name  = StringField('Name', [validators.Length(min=2, max=90)])
